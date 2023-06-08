@@ -1,7 +1,6 @@
 # FOODIE
 This app process a list of food items and displays the nutritional content of the items , generates recommendations based on the items in the list and also displays the items with maximum calories and fats so that user can choose to avoid these items.
 # SCREENSHOTS
-Upload The image of shopping list here
 ![Screenshot 2021-02-12 145251](https://user-images.githubusercontent.com/53873614/147878131-dab2d590-4448-4bd3-9bae-60781d716726.png)
 
 Displays all items from the list along with their nutritional content, steps needed to burn calories present in 100g of the item
