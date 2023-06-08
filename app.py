@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 app = Flask(__name__)
 pytesseract.pytesseract.tesseract_cmd=r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-def make_chart(dic):
+
+#This function makes a pie chart
+def make_pie_chart(dic):
 	c,tf,p,s,sod=0,0,0,0,0
 
 	for item in dic.keys():
@@ -32,12 +34,12 @@ def make_chart(dic):
 	centre_circle = plt.Circle((0,0),0.70,fc='white')
 	fig = plt.gcf()
 	fig.gca().add_artist(centre_circle)
-	# Equal aspect ratio ensures that pie is drawn as a circle
 	ax1.axis('equal')  
 	plt.tight_layout()
 	plt.savefig('static/pie_chart.png')
 
-def get_rec(dic):
+#This function uses a previously trained clustering algorithm's weights to generate recommendations	
+def get_recommendations(dic):
 	avg_cal= 0
 	avg_fat= 0
 	avg_pro= 0
@@ -52,9 +54,6 @@ def get_rec(dic):
 	avg_pro=avg_pro.tolist()
 	avg_carb=avg_carb.tolist()
 
-	
-	print(type(avg_carb))
-	#res=[avg_cal,avg_fat,avg_pro,avg_carb]
 	res=[avg_cal,avg_fat,avg_pro,avg_carb]
 	res=numpy.expand_dims(res,0)
 	kmeans = joblib.load("kmeans1.sav")
@@ -64,26 +63,19 @@ def get_rec(dic):
 	df=pd.read_csv('cluster_df.csv')
 	l=[]
 	
-	for name,cat in  zip(df['Food and Serving'], df['Cluster']):
-		if cat==c:
+	for name,category in  zip(df['Food and Serving'], df['Cluster']):
+		if category==c:
 			l.append(name)
-	print(l)
 	return l
-
-
-
-
-
 
 
 @app.route("/")
 def home():
 	return render_template('home.html')
 
+#This function accepts the shopping list, identifies items from it, sorts the items in order, gets recommendations and pie chart
 @app.route("/", methods=['POST'])
 def get_info():
-	#image=request.files['img']
-	#print(type(image))
 	filestr = request.files['img'].read()
 	#convert string data to numpy array
 	npimg = numpy.fromstring(filestr, numpy.uint8)
@@ -91,30 +83,26 @@ def get_info():
 	image = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 	l=pytesseract.image_to_string(image)
 	items=l.split("\n")
-	#items=['Broccoli','Asparagus','Sweet Corn','Tuna']
 	df=pd.read_csv('cluster_df.csv')
 	d={}
 
 	for item in items:
-		#d[item]=[df['Calories'].where(df['Food and Serving']==item),df['Total Fat'].where(df['Food and Serving']==item)]
 		for elem in range(len(df['Calories'])):
 			if df['Food and Serving'][elem]==item:
 				d[item]=[df['Calories'][elem],df['Total Fat'][elem],df['Protein'][elem],df['Sugars'][elem],df['Sodium'][elem],df['Total Carbo-hydrate'][elem]]
 	l=d.keys()
-	print(l)
 	cals = sorted(l, key=lambda x: d[x][0], reverse=True)
 	fats=  sorted(l, key=lambda x: d[x][1], reverse=True)
-	make_chart(d)
-	rec_items=get_rec(d)
-	#  print(rec_items)
+	make_pie_chart(d)
+	rec_items=get_recommendations(d)
 	with open('data.pickle','wb') as file:
 		pickle.dump(d,file) 
 	
 	return render_template('details.html',d=d,cals=cals,fats=fats,lim=3,recom=rec_items)
 
+#This function deleted the item from the list and updates the pie chart accordingly
 @app.route("/delete/<item>")
 def remove_item(item):
-	print("Inside delete")
 	with open('data.pickle','rb') as file:
 		d=pickle.load(file)
 
@@ -122,10 +110,10 @@ def remove_item(item):
 	del d[str(item)]
 	cals = sorted(d.keys(), key=lambda x: d[x][0], reverse=True)
 	fats=  sorted(d.keys(), key=lambda x: d[x][1], reverse=True)
-	make_chart(d)
+	make_pie_chart(d)
 	with open('data.pickle','wb') as file:
 		pickle.dump(d,file)
 	return render_template('details.html',d=d,cals=cals,fats=fats,lim=3)
 
 if __name__=='__main__':
-	app.run(debug=True)
+	app.run()
