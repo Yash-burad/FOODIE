@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+
+	<title>Details</title>
+	<style type="text/css">
+		#cnts,#cals{
+			height: 40%;
+			padding-right: 40px;
+			padding-left: 40px;
+
+		}
+		.row{
+			min-height: 150px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+		.col-sm-4{
+			margin-right: 10px;
+			margin-left: 10px;
+		}
+		.jumbotron{
+			background-image:linear-gradient(rgb(202, 70, 202),pink);
+			color: white;
+		}
+		.btn{
+			border-color: white;
+			color:red;
+			
+			display: inline-block;
+		}
+		body{
+			background-image:url("static/img/background_home.jpg");
+			background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          height: 100%;
+		}
+		.bg-info{
+			background-image: linear-gradient(to 45deg, rgba(213, 15, 61, 0.6), rgba(13, 17, 198, 0.69) 100%);
+		}
+	</style>
+</head>
+<body style="background-image:url('static/img/background_home.jpg')">
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1>Contents Summary</h1>      
+    <p>This page shows you all the information related to the items in the list.</p>
+  </div>
+</div>
+<div class="row justify-content-center align-items-center">
+<div  id="cnts" class="card bg-info text-white col-sm-8">
+	<div class="card-header"><h4>Items and Contents</h4></div>
+	<div style="display: inline;" class="row card-body">
+		<p><b>ITEM &emsp;&emsp;&emsp;&emsp;  CALS  &ensp;&emsp; FAT &ensp;&emsp;  PRO&ensp;&emsp;   SUG &ensp;&emsp;  SOD </b> </p>
+		<hr style="height:4px;border-width:0;color:white;background-color:white">
+	{% for item in d.keys() %}
+		<p>{{item}} &emsp;&emsp;  {{d[item][0]}} &emsp;&emsp;&ensp; {{d[item][1]}}&emsp;&emsp; {{d[item][2]}} &emsp;&emsp; {{d[item][3]}}  &emsp;&emsp;{{d[item][4]}} &emsp;&emsp;&emsp;&emsp;<i class="material-icons">&#xe566;</i> {{d[item][0]*25}}
+		<form  action="/delete/{{item}}">
+    	<input class="btn btn-outline-danger" type="submit" value="Delete Item" />
+		</form>
+		</p>
+		<hr style="height:1px;border-width:0;color:white;background-color:white">
+		<!--p><i class="material-icons">&#xe566;</i> {{d[item][0]*25}}</p-->
+	{% endfor %}
+	</div>
+</div>
+</div>
+<div class="row justify-content-center align-items-center">
+<div  id="cnts" class="card bg-warning text-white col-sm-4">
+	<div class="card-header"><h4>Items with highest Fats</h4></div>
+	<div class="card-body">
+
+	<p> ITEM    &emsp;&emsp;FATS</p>
+	<hr style="height:4px;border-width:0;color:white;background-color:white">
+	{% for item in fats[:lim] %}
+		<p>{{item}} &emsp;&emsp; {{d[item][1]}}</p>
+		<hr style="height:1px;border-width:0;color:white;background-color:white">
+	{% endfor %}
+	</div>
+</div>
+<div id="cals" class="card bg-danger text-white col-sm-4 ">
+	<div class="card-header"><h4>Items with highest Calories</h4></div>
+	<div class="card-body">
+	<p> ITEM  &emsp;&emsp;CALS</p>
+	<hr style="height:4px;border-width:0;color:white;background-color:white">
+	{% for item in cals[:lim] %}
+		<p>{{item}}       &emsp;&emsp; {{d[item][0]}}          </p>
+		<hr style="height:1px;border-width:0;color:white;background-color:white">
+	{% endfor %}
+	</div>
+</div>
+</div>
+<div class="row justify-content-center align-items-center">
+<div id="cals" class="card bg-success text-white col-sm-8 ">
+	<div class="card-header"><h4>Recommended Items Based on your Choice</h4></div>
+	<div class="card-body">
+	
+	<hr style="height:4px;border-width:0;color:white;background-color:white">
+	{% for item in recom[:5] %}
+		<h4>{{item}}</h4>
+		<hr style="height:1px;border-width:0;color:white;background-color:white">
+	{% endfor %}
+	</div>
+</div>
+</div>
+<div class="row justify-content-center align-items-center">
+<div class="card bg-light col-sm-6" style="padding: 10px;">
+	<h3> Contents of the listed items</h3>
+	<img src="static/pie_chart.png">
+</div>
+</div>
+</body>
+</html>
+
